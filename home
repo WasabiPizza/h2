@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start</title>
+    <style>
+        :root {
+            /* One UI Light Theme Variables */
+            --bg-color: #f7f7f7;
+            --card-bg: #ffffff;
+            --text-primary: #000000;
+            --text-secondary: #747474;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --icon-bg: #f0f0f0;
+            --hover-bg: #ececec;
+        }
+
+        [data-theme="dark"] {
+            /* One UI Dark Theme Variables (OLED) */
+            --bg-color: #000000; /* Pitch Black for OLED */
+            --card-bg: #1c1c1c;  /* Dark Gray for separation */
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --shadow: none;
+            --icon-bg: #2c2c2c;
+            --hover-bg: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'SamsungOne', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* One UI focuses on reachability, pushing content slightly down or centering */
+            padding: 2rem;
+        }
+
+        /* Header Area */
+        header {
+            display: flex;
+            justify-content: center; /* Centered on Mobile */
+            align-items: center;
+            padding: 2rem 0.5rem 2rem 0.5rem;
+            margin-bottom: 1rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Grid Container */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            /* Mobile: Fixed 3 columns */
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Desktop/Tablet adjustments */
+        @media (min-width: 600px) {
+            header {
+                justify-content: flex-start; /* Left align on desktop */
+            }
+
+            .grid {
+                /* Larger screens: Adaptive columns */
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 2rem;
+            }
+        }
+
+        /* Card / Link Item */
+        .shortcut {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 26px; /* High radius for One UI feel */
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .shortcut:hover {
+            background-color: var(--hover-bg);
+            transform: scale(1.03);
+        }
+
+        .shortcut:active {
+            transform: scale(0.95);
+        }
+
+        /* Icon Container (Squircle-ish) */
+        .icon-container {
+            width: 64px;
+            height: 64px;
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Samsung One UI Squircle approximation */
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* High contrast border for icon in dark mode to separate from pitch black */
+        [data-theme="dark"] .icon-container {
+            border: 1px solid #333;
+        }
+
+        .icon-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .shortcut-title {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            max-width: 120px;
+        }
+
+        /* Loading Skeleton for Icons */
+        .skeleton {
+            width: 100%;
+            height: 100%;
+            background-color: var(--icon-bg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .loaded .skeleton {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Favorites</h1>
+    </header>
+
+    <main>
+        <div class="grid" id="grid">
+            <!-- Links will be injected here by JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        // --- CONFIGURATION ---
+        // Add your most visited websites here.
+        // TIP: If a favicon doesn't load, add an 'icon' property with a direct link to an image.
+        const websites = [
+            { name: "Reddit", url: "https://reddit.com" },
+            { name: "Instagram", url: "https://www.instagram.com/" },
+            { name: "Jisho", url: "https://jisho.org/" },
+            { name: "FibraClick", url: "https://forum.fibra.click/" },
+            { name: "GrapheneOS", url: "https://discuss.grapheneos.org/" },
+            { name: "Assistant", url: "https://kagi.com/assistant" },
+            { name: "Translate", url: "https://translate.kagi.com/" },
+            { name: "Orpheus", url: "https://orpheus.network/", icon: "https://orpheus.network/favicon.ico" },
+            { name: "Redacted", url: "https://redacted.sh/", icon: "https://redacted.sh/favicon.ico" },
+            { name: "Amazon", url: "https://www.amazon.it/" },
+            { name: "Subito", url: "https://www.subito.it/" },
+            { name: "Vinted", url: "https://www.vinted.it/" }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const grid = document.getElementById('grid');
+
+        // --- RENDER LINKS ---
+        function renderLinks() {
+            grid.innerHTML = '';
+            websites.forEach(site => {
+                const a = document.createElement('a');
+                a.href = site.url;
+                a.className = 'shortcut';
+
+                // Logic: Use manual icon if provided, otherwise ask Google
+                let faviconUrl;
+                if (site.icon) {
+                    faviconUrl = site.icon;
+                } else {
+                    faviconUrl = `https://www.google.com/s2/favicons?domain=${site.url}&sz=128`;
+                }
+
+                a.innerHTML = `
+                    <div class="icon-container">
+                        <div class="skeleton"></div>
+                        <img src="${faviconUrl}" alt="${site.name}" class="icon-image" onload="this.parentElement.classList.add('loaded')" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHkxPSI4IiB4Mj0iMTIiIHkyPSIxNiIvPjxsaW5lIHgxPSI4IiB5MT0iMTIiIHgyPSIxNiIgeTI9IjEyIi8+PC9zdmc+'">
+                    </div>
+                    <span class="shortcut-title">${site.name}</span>
+                `;
+                grid.appendChild(a);
+            });
+        }
+
+        // --- THEME HANDLING ---
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Initialize Theme (Auto-detect)
+        const systemDarkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const updateTheme = (e) => {
+            const newTheme = e.matches ? 'dark' : 'light';
+            setTheme(newTheme);
+        };
+
+        // Set initial
+        updateTheme(systemDarkQuery);
+
+        // Listen for system changes
+        systemDarkQuery.addEventListener('change', updateTheme);
+
+        // Initial Render
+        renderLinks();
+
+    </script>
+</body>
+</html>
